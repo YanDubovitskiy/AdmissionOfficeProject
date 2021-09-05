@@ -23,14 +23,13 @@ public class FacultyService extends Util implements FacultyDAO {
             preparedStatement.setInt(1,id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
-
+                resultSet.next();
                 faculty.setId(resultSet.getInt("id"));
                 faculty.setName(resultSet.getString("name"));
                 faculty.setDean(resultSet.getString("dean"));
                 faculty.setBudgetPlaces(resultSet.getInt("budget_places"));
                 faculty.setFeePayingPlaces(resultSet.getInt("fee_paying_places"));
 
-                preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

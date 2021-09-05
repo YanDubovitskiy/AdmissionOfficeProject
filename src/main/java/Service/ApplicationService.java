@@ -52,7 +52,7 @@ public class ApplicationService extends Util implements ApplicationDAO {
             preparedStatement.setInt(1,id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
-
+            resultSet.next();
             application.setId(resultSet.getInt("id"));
             application.setFirstName(resultSet.getString("first_name"));
             application.setLastName(resultSet.getString("last_name"));
@@ -61,7 +61,6 @@ public class ApplicationService extends Util implements ApplicationDAO {
             Integer facultyId = resultSet.getInt("faculty_id");
             FacultyService facultyService = new FacultyService();
             Faculty faculty = facultyService.getFacultyById(facultyId);
-
             application.setFaculty(faculty);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -121,21 +120,29 @@ public class ApplicationService extends Util implements ApplicationDAO {
     @Override
     public void update(Integer id,String columnName, String newValue) throws SQLException {
         PreparedStatement preparedStatement = null;
-        String sql = "UPDATE applications SET ? = ? WHERE id = ?";
+        String sqlName = "UPDATE applications SET first_name = ? WHERE id = ?";
+        String sqlLastName = "UPDATE applications SET last_name = ? WHERE id = ?";
+        String sqlPointsSummary = "UPDATE applications SET points_summary = ? WHERE id = ?";
 
         try {
-            preparedStatement = connection.prepareStatement(sql);
-
-            if(columnName.equals("points_summary") || columnName.equals("faculty_id")){
-                Integer newIntegerValue = Integer.parseInt(newValue);
-                preparedStatement.setInt(2, newIntegerValue);
+            if(columnName.equals("first_name")) {
+                preparedStatement = connection.prepareStatement(sqlName);
+            }
+            else if (columnName.equals("last_name")){
+                preparedStatement = connection.prepareStatement(sqlLastName);
+            }
+            else{
+                preparedStatement = connection.prepareStatement(sqlPointsSummary);
+            }
+            if(columnName.equals("points_summary")){
+                int newIntegerValue = Integer.parseInt(newValue);
+                preparedStatement.setInt(1, newIntegerValue);
             }
             else {
-                preparedStatement.setString(2, newValue);
+                preparedStatement.setString(1, newValue);
             }
 
-            preparedStatement.setString(1, columnName);
-            preparedStatement.setInt(3, id);
+            preparedStatement.setInt(2, id);
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -147,7 +154,6 @@ public class ApplicationService extends Util implements ApplicationDAO {
             if (connection != null) {
                 connection.close();
             }
-
         }
     }
 

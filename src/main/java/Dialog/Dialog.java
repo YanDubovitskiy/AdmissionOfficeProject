@@ -6,14 +6,15 @@ import Service.ApplicationService;
 import Service.FacultyService;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Dialog {
 
     public static void interaction() throws SQLException {
         Scanner scanner = new Scanner(System.in);
-        Faculty faculty;
-        Application application;
+
         while (true) {
             System.out.println("Welcome to the Admission Office\n" +
                     "To make an application: enter 1\n" +
@@ -61,12 +62,13 @@ public class Dialog {
                 String lastName = scanner.next();
                 System.out.println("Write your points summary");
                 Integer pointsSummary = scanner.nextInt();
-                for(Faculty faculty : facultyService.getAllFaculties()){
+                List<Faculty> faculties = new ArrayList<>(facultyService.getAllFaculties());
+                for(Faculty faculty : faculties){
                     System.out.println(faculty);
                 }
                 System.out.println("Enter faculty number");
-                Integer facultyId = scanner.nextInt();
-                Faculty faculty = facultyService.getFacultyById(facultyId);
+                int facultyId = scanner.nextInt();
+                Faculty faculty = faculties.get(facultyId-1);
                 applicationService.add(new Application(firstName,lastName,faculty,pointsSummary));
                     break;
 
@@ -79,7 +81,7 @@ public class Dialog {
                 case(3):
                 System.out.println("Enter application id");
                 Integer applicationIdToUpdate = scanner.nextInt();
-                System.out.println("first_name\n"+"last_name\n"+"points_summary\n" +"faculty_id\n");
+                System.out.println("first_name\n"+"last_name\n"+"points_summary");
                 System.out.println("Write column name to update");
                 String columnName = scanner.next();
                 System.out.println("Enter new value");
@@ -91,11 +93,13 @@ public class Dialog {
             case (4):
                 System.out.println("Enter application id");
                 Integer applicationIdToShow = scanner.nextInt();
-                applicationService.getApplicationById(applicationIdToShow);
+                System.out.println( applicationService.getApplicationById(applicationIdToShow));
                 break;
 
                 case (5):
-                applicationService.getAllApplications();
+                    for(Application application : applicationService.getAllApplications()){
+                        System.out.println(application);
+                    }
                     break;
 
         }
